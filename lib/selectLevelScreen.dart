@@ -4,22 +4,25 @@ import 'package:simon_game/bestScoreScreen.dart';
 import 'package:simon_game/easyLevelScreen.dart';
 import 'package:simon_game/hardLevelScreen.dart';
 import 'package:simon_game/mediumLevelScreen.dart';
+import 'package:simon_game/user.dart';
 
 class SelectLevelScreen extends StatefulWidget {
-  const SelectLevelScreen({Key? key}) : super(key: key);
+  User user;
+
+  SelectLevelScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<SelectLevelScreen> createState() => _SelectLevelScreenState();
+
 }
 
-Widget easyLevelBtn(BuildContext context) {
+Widget easyLevelBtn(BuildContext context, User user) {
   return Container(
     alignment: Alignment.center,
     child: TextButton(
       onPressed: () => {
-        print("Easy level"),
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const EasyLevelScreen())),
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => EasyLevelScreen(user: user))),
       },
       child: const Text(
         "EASY",
@@ -33,14 +36,13 @@ Widget easyLevelBtn(BuildContext context) {
   );
 }
 
-Widget mediumLevelBtn(BuildContext context) {
+Widget mediumLevelBtn(BuildContext context, User user) {
   return Container(
     alignment: Alignment.center,
     child: TextButton(
       onPressed: () => {
-        print("Easy level"),
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const MediumLevelScreen())),
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => MediumLevelScreen(user: user))),
       },
       child: const Text(
         "MEDIUM",
@@ -54,14 +56,13 @@ Widget mediumLevelBtn(BuildContext context) {
   );
 }
 
-Widget hardLevelBtn(BuildContext context) {
+Widget hardLevelBtn(BuildContext context, User user) {
   return Container(
     alignment: Alignment.center,
     child: TextButton(
       onPressed: () => {
-        print("Hard level"),
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const HardLevelScreen())),
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => HardLevelScreen(user: user))),
       },
       child: const Text(
         "HARD",
@@ -75,13 +76,14 @@ Widget hardLevelBtn(BuildContext context) {
   );
 }
 
-Widget bestScoreBtn(BuildContext context) {
+Widget bestScoreBtn(BuildContext context, User user) {
   return Container(
     alignment: Alignment.center,
     child: TextButton(
       onPressed: () => {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const BestScoreScreen())),
+
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BestScoreScreen(user: user))),
       },
       child: const Text(
         "BEST SCORE",
@@ -89,23 +91,6 @@ Widget bestScoreBtn(BuildContext context) {
             letterSpacing: 5,
             color: Colors.amberAccent,
             fontSize: 30,
-            fontWeight: FontWeight.bold),
-      ),
-    ),
-  );
-}
-
-Widget startBtn() {
-  return Container(
-    alignment: Alignment.center,
-    child: TextButton(
-      onPressed: () => {},
-      child: const Text(
-        "LET'S START",
-        style: TextStyle(
-            letterSpacing: 5,
-            color: Colors.amberAccent,
-            fontSize: 35,
             fontWeight: FontWeight.bold),
       ),
     ),
@@ -122,8 +107,8 @@ class _SelectLevelScreenState extends State<SelectLevelScreen> {
         child: Stack(
           children: <Widget>[
             Container(
-              height: double.infinity,
-              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -133,19 +118,20 @@ class _SelectLevelScreenState extends State<SelectLevelScreen> {
                     Color(0xff77cccc),
                   ])),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 120,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal:MediaQuery.of(context).size.width / 10,
+                  vertical: MediaQuery.of(context).size.height / 10,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    const Align(
+                    Align(
                       alignment: Alignment.bottomRight,
                       child: Text(
-                        "NICKNAME",
-                        style: TextStyle(
+                        widget.user.user_name,
+                        style: const TextStyle(
                           color: Colors.amberAccent,
                           fontSize: 15,
                           fontFamily: "Schyler",
@@ -166,16 +152,15 @@ class _SelectLevelScreenState extends State<SelectLevelScreen> {
                     const SizedBox(
                       height: 60,
                     ),
-                    easyLevelBtn(context),
-                    mediumLevelBtn(context),
-                    hardLevelBtn(context),
+                    easyLevelBtn(context, widget.user),
+                    mediumLevelBtn(context, widget.user),
+                    hardLevelBtn(context, widget.user),
                     const SizedBox(
                       height: 60,
                     ),
-                    bestScoreBtn(context),
-                    startBtn(),
+                    bestScoreBtn(context, widget.user),
                     const SizedBox(
-                      height: 20,
+                      height: 120,
                     ),
                     IconButton(
                         onPressed: () => {

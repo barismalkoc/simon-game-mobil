@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
+import 'package:simon_game/databaseHelper.dart';
 import 'package:simon_game/selectLevelScreen.dart';
+import 'package:simon_game/user.dart';
+import 'package:simon_game/userDao.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -8,6 +12,9 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
+
+TextEditingController userNameController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
 
 Widget nickNameContainer() {
   return Column(
@@ -18,6 +25,7 @@ Widget nickNameContainer() {
         alignment: Alignment.center,
         height: 50,
         child: TextField(
+          controller: userNameController,
           showCursor: false,
           textAlign: TextAlign.center,
           keyboardType: TextInputType.visiblePassword,
@@ -57,8 +65,8 @@ Widget passwordContainer() {
       Container(
         alignment: Alignment.center,
         height: 50,
-
         child: TextField(
+          controller: passwordController,
           showCursor: false,
           textAlign: TextAlign.center,
           textAlignVertical: TextAlignVertical.center,
@@ -92,12 +100,14 @@ Widget passwordContainer() {
 }
 
 Widget loginBtn(BuildContext context) {
+  User user;
   return Container(
     alignment: Alignment.bottomLeft,
     child: TextButton(
       onPressed: () => {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const SelectLevelScreen())),
+        user =
+            User(1, userNameController.text, passwordController.text, 0, 0, 0),
+        UserDao().loginControl(context, user),
       },
       child: const Text(
         "LOGIN",
@@ -110,13 +120,19 @@ Widget loginBtn(BuildContext context) {
   );
 }
 
-Widget signInBtn() {
+Widget signInBtn(BuildContext context) {
+  User user;
   return Container(
     alignment: Alignment.bottomRight,
     child: TextButton(
-      onPressed: () => print("Sign In button"),
+      onPressed: () => {
+        user =
+            User(1, userNameController.text, passwordController.text, 0, 0, 0),
+        print(userNameController.text),
+        UserDao().addUser(context, user),
+      },
       child: const Text(
-        "SIGN IN",
+        "REGISTER",
         style: TextStyle(
             color: Colors.amberAccent,
             fontSize: 20,
@@ -136,8 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Stack(
           children: <Widget>[
             Container(
-              height: double.infinity,
-              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -147,9 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     Color(0xff77cccc),
                   ])),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 120,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal:MediaQuery.of(context).size.width / 20,
+                  vertical: MediaQuery.of(context).size.height / 10,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -167,7 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     nickNameContainer(),
                     const SizedBox(height: 30),
                     passwordContainer(),
-                    const SizedBox(height: 70),
+                    const SizedBox(height: 50),
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -175,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(
                           width: 130,
                         ),
-                        signInBtn(),
+                        signInBtn(context),
                       ],
                     )
                   ],
